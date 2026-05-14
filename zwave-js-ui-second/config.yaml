@@ -1,11 +1,11 @@
-name: Z-Wave JS UI - Second
+name: Z-Wave JS EU
 version: dev
 slug: zwavejs2mqtt_second
-description: Second Z-Wave JS UI instance for a second Z-Wave controller
+description: Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave controller
 url: https://github.com/khalidaljasim/ha-zwave-js-ui-second
 ingress: true
 ingress_stream: true
-panel_title: Z-Wave 2
+panel_title: Z-Wave EU
 panel_icon: mdi:alpha-z-box
 startup: system
 init: false
