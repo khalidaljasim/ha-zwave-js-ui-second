@@ -11,10 +11,10 @@ with CONFIG_FILE.open("r", encoding="utf-8") as f:
     cfg = yaml.safe_load(f)
 
 # Identity changes: this makes Home Assistant see it as a separate add-on
-cfg["name"] = "Z-Wave JS UI - Second"
+cfg["name"] = "Z-Wave JS EU"
 cfg["slug"] = "zwavejs2mqtt_second"
-cfg["description"] = "Second Z-Wave JS UI instance for a second Z-Wave controller"
-cfg["panel_title"] = "Z-Wave 2"
+cfg["description"] = "Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave controller"
+cfg["panel_title"] = "Z-Wave EU"
 cfg["panel_icon"] = "mdi:alpha-z-box"
 
 # Point to your custom add-on repo
