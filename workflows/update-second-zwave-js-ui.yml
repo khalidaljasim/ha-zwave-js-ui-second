@@ -1,0 +1,43 @@
+name: Update Second Z-Wave JS UI Add-on
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out my repo
+        uses: actions/checkout@v4
+
+      - name: Remove old add-on copy
+        run: |
+          rm -rf zwave-js-ui-second
+
+      - name: Download latest official Z-Wave JS UI add-on
+        run: |
+          git clone --depth 1 https://github.com/hassio-addons/app-zwave-js-ui.git upstream
+          cp -R upstream/zwave-js-ui zwave-js-ui-second
+          rm -rf upstream
+
+      - name: Install Python YAML support
+        run: |
+          python3 -m pip install pyyaml
+
+      - name: Patch add-on identity and ports
+        run: |
+          python3 scripts/patch_zwave_second.py
+
+      - name: Commit changes if anything changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "Update second Z-Wave JS UI add-on from upstream"
+          git push
