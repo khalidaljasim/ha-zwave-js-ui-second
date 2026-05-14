@@ -13,8 +13,7 @@ timeout: 30
 arch:
 - aarch64
 - amd64
-discovery:
-- zwave_js
+discovery: []
 services:
 - mqtt:want
 uart: true
