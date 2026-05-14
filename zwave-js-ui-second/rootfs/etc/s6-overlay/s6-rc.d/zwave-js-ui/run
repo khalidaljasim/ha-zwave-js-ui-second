@@ -1,0 +1,18 @@
+#!/command/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Home Assistant Community App: Z-Wave JS UI
+# Starts zwave-js-ui
+# ==============================================================================
+bashio::log.info "Starting the Z-Wave JS UI..."
+
+export NODE_ENV=production
+export PORT=44920
+export STORE_DIR=/data/store
+export ZWAVEJS_EXTERNAL_CONFIG=/data/db
+export FORCE_DISABLE_SSL=true
+
+cd /opt/node_modules/zwave-js-ui \
+    || bashio::exit.nok "Could not change directory to application"
+
+exec node server/bin/www

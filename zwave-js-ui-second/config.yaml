@@ -1,0 +1,31 @@
+name: Z-Wave JS UI - Second
+version: dev
+slug: zwavejs2mqtt_second
+description: Second Z-Wave JS UI instance for a second Z-Wave controller
+url: https://github.com/khalidaljasim/ha-zwave-js-ui-second
+ingress: true
+ingress_stream: true
+panel_title: Z-Wave 2
+panel_icon: mdi:alpha-z-box
+startup: system
+init: false
+timeout: 30
+arch:
+- aarch64
+- amd64
+discovery:
+- zwave_js
+services:
+- mqtt:want
+uart: true
+udev: true
+map:
+- share:rw
+schema:
+  log_level: list(trace|debug|info|notice|warning|error|fatal)?
+ports:
+  3000/tcp: 3001
+  8091/tcp: 8092
+ports_description:
+  3000/tcp: Z-Wave JS WebSocket for second controller
+  8091/tcp: Web interface for second Z-Wave JS UI instance

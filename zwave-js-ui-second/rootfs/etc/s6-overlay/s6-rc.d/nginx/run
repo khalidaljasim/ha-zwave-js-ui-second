@@ -1,0 +1,11 @@
+#!/command/with-contenv bashio
+# ==============================================================================
+# Home Assistant Community App: Z-Wave JS UI
+# Runs the Nginx daemon
+# ==============================================================================
+
+# Wait for Z-Wave JS UI to be available
+bashio::net.wait_for 44920
+
+bashio::log.info "Starting NGinx..."
+exec nginx

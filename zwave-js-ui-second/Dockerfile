@@ -1,0 +1,77 @@
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:20.1.1
+# hadolint ignore=DL3006
+FROM ${BUILD_FROM}
+
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Environment configuration
+ENV \
+    S6_KILL_GRACETIME=30000 \
+    S6_SERVICES_GRACETIME=30000
+
+# Setup base
+ARG ZWAVE_JS_UI_VERSION="11.17.0"
+RUN \
+    apk add --no-cache \
+        eudev=3.2.14-r6 \
+        libusb=1.0.29-r0 \
+        nginx=1.28.3-r0 \
+        nodejs=24.14.1-r0 \
+        npm=11.11.0-r0 \
+    \
+    && npm install \
+        --no-audit \
+        --no-fund \
+        --no-update-notifier \
+        --omit=dev \
+        --prefix /opt \
+        "zwave-js-ui@${ZWAVE_JS_UI_VERSION}" \
+    \
+    && npm cache clean --force \
+    && rm -f -r \
+        /etc/nginx \
+        /root/.cache \
+        /root/.config \
+        /root/.npmrc \
+        /root/.node-gyp \
+        /root/.npm \
+        /tmp/.[!.]* \
+        /tmp/* \
+        /usr/lib/node_modules \
+        /usr/local/share/.cache
+
+# Copy root filesystem
+COPY rootfs /
+
+# Health check
+HEALTHCHECK CMD curl --fail http://127.0.0.1:8099/health/zwave || exit 1
+
+# Build arguments
+ARG BUILD_ARCH
+ARG BUILD_DATE
+ARG BUILD_DESCRIPTION
+ARG BUILD_NAME
+ARG BUILD_REF
+ARG BUILD_REPOSITORY
+ARG BUILD_VERSION
+
+# Labels
+LABEL \
+    io.hass.name="${BUILD_NAME}" \
+    io.hass.description="${BUILD_DESCRIPTION}" \
+    io.hass.arch="${BUILD_ARCH}" \
+    io.hass.type="addon" \
+    io.hass.version=${BUILD_VERSION} \
+    maintainer="Franck Nijhof <opensource@frenck.dev>" \
+    org.opencontainers.image.title="${BUILD_NAME}" \
+    org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
+    org.opencontainers.image.vendor="Home Assistant Community Apps" \
+    org.opencontainers.image.authors="Franck Nijhof <opensource@frenck.dev>" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.url="https://frenck.dev/home-assistant-apps" \
+    org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
+    org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.revision=${BUILD_REF} \
+    org.opencontainers.image.version=${BUILD_VERSION}
