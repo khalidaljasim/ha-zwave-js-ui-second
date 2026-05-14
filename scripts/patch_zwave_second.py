@@ -16,6 +16,7 @@ cfg["slug"] = "zwavejs2mqtt_second"
 cfg["description"] = "Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave controller"
 cfg["panel_title"] = "Z-Wave EU"
 cfg["panel_icon"] = "mdi:alpha-z-box"
+cfg["version"] = "dev-eu-1"
 
 # Point to your custom add-on repo
 cfg["url"] = "https://github.com/khalidaljasim/ha-zwave-js-ui-second"
