@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import yaml
 
 ADDON_DIR = Path("zwave-js-ui-second")
@@ -17,8 +18,7 @@ cfg["description"] = "Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave 
 cfg["panel_title"] = "Z-Wave EU"
 cfg["panel_icon"] = "mdi:alpha-z-box"
 
-upstream_version = str(cfg.get("version", "dev"))
-cfg["version"] = f"{upstream_version}-eu"
+cfg["version"] = os.environ.get("CUSTOM_ADDON_VERSION", "1.0.1")
 
 # Point to your custom add-on repo
 cfg["url"] = "https://github.com/khalidaljasim/ha-zwave-js-ui-second"
