@@ -1,5 +1,5 @@
 name: Z-Wave JS EU
-version: dev
+version: dev-eu-1
 slug: zwavejs2mqtt_second
 description: Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave controller
 url: https://github.com/khalidaljasim/ha-zwave-js-ui-second
