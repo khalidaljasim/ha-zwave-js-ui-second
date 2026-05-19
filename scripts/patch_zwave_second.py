@@ -18,7 +18,9 @@ cfg["description"] = "Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave 
 cfg["panel_title"] = "Z-Wave EU"
 cfg["panel_icon"] = "mdi:alpha-z-box"
 
-cfg["version"] = os.environ.get("CUSTOM_ADDON_VERSION", "1.0.1")
+# Version is based on the upstream official add-on commit
+upstream_short_sha = os.environ.get("UPSTREAM_SHORT_SHA", "manual")
+cfg["version"] = f"eu-{upstream_short_sha}"
 
 # Point to your custom add-on repo
 cfg["url"] = "https://github.com/khalidaljasim/ha-zwave-js-ui-second"
@@ -27,9 +29,6 @@ cfg["url"] = "https://github.com/khalidaljasim/ha-zwave-js-ui-second"
 cfg["discovery"] = []
 
 # Different exposed ports so it does not clash with your main Z-Wave JS UI
-#
-# Left side  = internal add-on port
-# Right side = exposed Home Assistant OS host port
 cfg["ports"] = cfg.get("ports", {})
 cfg["ports"]["8091/tcp"] = 8092
 cfg["ports"]["3000/tcp"] = 3001
