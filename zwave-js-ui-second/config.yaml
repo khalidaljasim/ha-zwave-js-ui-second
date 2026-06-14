@@ -1,5 +1,5 @@
 name: Z-Wave JS EU
-version: eu-bb67f23
+version: eu-e5d240e
 slug: zwavejs2mqtt_second
 description: Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave controller
 url: https://github.com/khalidaljasim/ha-zwave-js-ui-second
@@ -20,8 +20,6 @@ uart: true
 udev: true
 map:
 - share:rw
-schema:
-  log_level: list(trace|debug|info|notice|warning|error|fatal)?
 ports:
   3000/tcp: 3001
   8091/tcp: 8092
