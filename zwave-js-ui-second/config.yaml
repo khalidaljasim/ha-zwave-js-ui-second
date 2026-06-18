@@ -1,5 +1,5 @@
 name: Z-Wave JS EU
-version: eu-e5d240e
+version: 7.4.0
 slug: zwavejs2mqtt_second
 description: Z-Wave JS UI instance for the EU / Bahrain 868 MHz Z-Wave controller
 url: https://github.com/khalidaljasim/ha-zwave-js-ui-second
@@ -24,5 +24,5 @@ ports:
   3000/tcp: 3001
   8091/tcp: 8092
 ports_description:
-  3000/tcp: Z-Wave JS WebSocket for second controller
-  8091/tcp: Web interface for second Z-Wave JS UI instance
+  3000/tcp: Z-Wave JS WebSocket for EU controller
+  8091/tcp: Web interface for Z-Wave JS EU
