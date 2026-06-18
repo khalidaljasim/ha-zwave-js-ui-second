@@ -1,9 +1,10 @@
-name: Update Second Z-Wave JS UI Add-on
+name: Update Z-Wave JS EU
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * 0"
+    # Check every day at 03:00 UTC / 06:00 Bahrain time
+    - cron: "0 3 * * *"
 
 permissions:
   contents: write
@@ -13,76 +14,101 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out my repo
+      - name: Check out my repository
         uses: actions/checkout@v4
 
-      - name: Check latest upstream commit
+      - name: Find latest official release
+        shell: bash
         run: |
-          git clone --depth 1 https://github.com/hassio-addons/addon-zwave-js-ui.git upstream-check
+          UPSTREAM_TAG=$(
+            curl -fsSL \
+              https://api.github.com/repos/hassio-addons/app-zwave-js-ui/releases/latest \
+              | jq -r '.tag_name'
+          )
 
-          UPSTREAM_SHA=$(git -C upstream-check rev-parse HEAD)
-          UPSTREAM_SHORT_SHA=$(git -C upstream-check rev-parse --short HEAD)
-
-          echo "UPSTREAM_SHA=$UPSTREAM_SHA" >> $GITHUB_ENV
-          echo "UPSTREAM_SHORT_SHA=$UPSTREAM_SHORT_SHA" >> $GITHUB_ENV
-
-          if [ -f .upstream-zwave-js-ui-commit ]; then
-            CURRENT_SHA=$(cat .upstream-zwave-js-ui-commit)
-          else
-            CURRENT_SHA=""
+          if [ -z "$UPSTREAM_TAG" ] || [ "$UPSTREAM_TAG" = "null" ]; then
+            echo "Could not determine the latest official release."
+            exit 1
           fi
 
-          echo "Current stored upstream SHA: $CURRENT_SHA"
-          echo "Latest upstream SHA: $UPSTREAM_SHA"
+          UPSTREAM_VERSION="${UPSTREAM_TAG#v}"
 
-          if [ "$CURRENT_SHA" = "$UPSTREAM_SHA" ]; then
-            echo "No upstream update found."
-            echo "SHOULD_UPDATE=false" >> $GITHUB_ENV
+          echo "Latest official tag: $UPSTREAM_TAG"
+          echo "Latest official version: $UPSTREAM_VERSION"
+
+          echo "UPSTREAM_TAG=$UPSTREAM_TAG" >> "$GITHUB_ENV"
+          echo "UPSTREAM_VERSION=$UPSTREAM_VERSION" >> "$GITHUB_ENV"
+
+          if [ -f .upstream-zwave-js-ui-release ]; then
+            CURRENT_TAG=$(cat .upstream-zwave-js-ui-release)
           else
-            echo "Upstream update found."
-            echo "SHOULD_UPDATE=true" >> $GITHUB_ENV
+            CURRENT_TAG=""
           fi
 
-          rm -rf upstream-check
+          echo "Currently mirrored tag: $CURRENT_TAG"
 
-      - name: Stop if no upstream update
+          if [ "$CURRENT_TAG" = "$UPSTREAM_TAG" ]; then
+            echo "SHOULD_UPDATE=false" >> "$GITHUB_ENV"
+            echo "No new official release."
+          else
+            echo "SHOULD_UPDATE=true" >> "$GITHUB_ENV"
+            echo "New official release found."
+          fi
+
+      - name: Report no update
         if: env.SHOULD_UPDATE == 'false'
         run: |
-          echo "Official Z-Wave JS UI add-on has not changed. No update needed."
+          echo "Z-Wave JS EU is already based on $UPSTREAM_TAG."
 
-      - name: Remove old add-on copy
+      - name: Remove previous generated copy
         if: env.SHOULD_UPDATE == 'true'
         run: |
           rm -rf zwave-js-ui-second
           rm -rf upstream
 
-      - name: Download latest official Z-Wave JS UI add-on
+      - name: Download exact official release
         if: env.SHOULD_UPDATE == 'true'
         run: |
-          git clone --depth 1 https://github.com/hassio-addons/addon-zwave-js-ui.git upstream
+          git clone \
+            --depth 1 \
+            --branch "$UPSTREAM_TAG" \
+            https://github.com/hassio-addons/app-zwave-js-ui.git \
+            upstream
+
           cp -R upstream/zwave-js-ui zwave-js-ui-second
           rm -rf upstream
 
-      - name: Install Python YAML support
+      - name: Install YAML support
         if: env.SHOULD_UPDATE == 'true'
         run: |
           python3 -m pip install pyyaml
 
-      - name: Patch add-on identity and ports
+      - name: Apply EU customizations
         if: env.SHOULD_UPDATE == 'true'
         run: |
           python3 scripts/patch_zwave_second.py
 
-      - name: Store latest upstream commit
+      - name: Store mirrored release
         if: env.SHOULD_UPDATE == 'true'
         run: |
-          echo "$UPSTREAM_SHA" > .upstream-zwave-js-ui-commit
+          echo "$UPSTREAM_TAG" > .upstream-zwave-js-ui-release
 
-      - name: Commit changes if upstream changed
+      - name: Remove old commit-tracking file
+        if: env.SHOULD_UPDATE == 'true'
+        run: |
+          rm -f .upstream-zwave-js-ui-commit
+
+      - name: Commit new release
         if: env.SHOULD_UPDATE == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+
           git add .
-          git diff --cached --quiet || git commit -m "Update Z-Wave JS EU from upstream $UPSTREAM_SHORT_SHA"
-          git push
+
+          if git diff --cached --quiet; then
+            echo "No files changed."
+          else
+            git commit -m "Update Z-Wave JS EU to $UPSTREAM_TAG"
+            git push
+          fi
