@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out my repository
-        uses: actions/checkout@v6v4
+        uses: actions/checkout@v6
 
       - name: Find latest official release
         shell: bash
