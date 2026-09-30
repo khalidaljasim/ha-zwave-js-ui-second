@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.5
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:21.0.6
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -11,7 +11,7 @@ ENV \
     S6_SERVICES_GRACETIME=30000
 
 # Setup base
-ARG ZWAVE_JS_UI_VERSION="11.24.1"
+ARG ZWAVE_JS_UI_VERSION="11.24.2"
 RUN \
     apk add --no-cache \
         eudev=3.2.14-r6 \
